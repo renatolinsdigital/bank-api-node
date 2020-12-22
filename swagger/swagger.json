@@ -1,0 +1,283 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Bank API with CRUD functionallity",
+    "version": "1.0.0",
+    "title": "Bank API"
+  },
+  "host": "localhost:8080",
+  "tags": [
+    {
+      "name": "account",
+      "description": "Account management endpoint"
+    }
+  ],
+  "paths": {
+    "/account": {
+      "get": {
+        "tags": ["account"],
+        "summary": "Get existing accounts list",
+        "description": "Get existing accounts list",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AccountWithId"
+              }
+            }
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/GenericError"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["account"],
+        "summary": "Create a new account",
+        "description": "Create a new account",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Account object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Account"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/AccountWithId"
+            }
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/GenericError"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["account"],
+        "summary": "Updates an account entirely",
+        "description": "Updates an account entirely",
+        "consumes": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Account object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AccountWithId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account has been fully updated"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/GenericError"
+            }
+          },
+          "404": {
+            "schema": {
+              "$ref": "#/definitions/NotFoundError"
+            }
+          }
+        }
+      }
+    },
+    "/account/{accountId}": {
+      "get": {
+        "tags": ["account"],
+        "summary": "Get an existing account by Id",
+        "description": "Get an existing account by Id",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Account ID to be informed",
+            "required": "true",
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/AccountWithId"
+            }
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/GenericError"
+            }
+          },
+          "404": {
+            "schema": {
+              "$ref": "#/definitions/NotFoundError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["account"],
+        "summary": "Deletes an existing account by Id",
+        "description": "Deletes an existing account by Id",
+        "produces": ["text/plain"],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Account ID to be informed",
+            "required": "true",
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "successful deletion",
+            "schema": {
+              "$ref": "#/definitions/TextResponse"
+            }
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/GenericError"
+            }
+          },
+          "404": {
+            "schema": {
+              "$ref": "#/definitions/NotFoundError"
+            }
+          }
+        }
+      }
+    },
+    "/account/balance/{accountId}": {
+      "patch": {
+        "tags": ["account/balance"],
+        "summary": "Updates an existing account balance",
+        "description": "Updates an existing account balance",
+        "consumes": ["application/json"],
+        "produces": ["text/plain"],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Account ID to be informed",
+            "required": "true",
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Account object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewBalance"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/TextResponse"
+            }
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/GenericError"
+            }
+          },
+          "404": {
+            "schema": {
+              "$ref": "#/definitions/NotFoundError"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Account": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Renato Lins"
+        },
+        "balance": {
+          "type": "number",
+          "example": 2700.89
+        }
+      }
+    },
+    "AccountWithId": {
+      "allOf": [
+        {
+          "type": "object",
+          "required": ["id"],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/Account"
+        }
+      ]
+    },
+    "NewBalance": {
+      "type": "object",
+      "properties": {
+        "newBalance": {
+          "type": "number",
+          "example": 900.0
+        }
+      }
+    },
+    "TextResponse": {
+      "type": "string",
+      "example": "Operation successful"
+    },
+    "GenericError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Malformed request or error occurred"
+        }
+      }
+    },
+    "NotFoundError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Resource not found"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <p>Bank API - Total accounts: <span id="accounts-count"></span></p>
+    <script>
+      const fetchAccounts = async () => {
+        const res = await fetch('http://localhost:8080/account');
+        const accounts = await res.json();
+        const accountsCount = document.querySelector('#accounts-count');
+        accountsCount.innerHTML = accounts.length;
+      };
+      fetchAccounts();
+    </script>
+  </body>
+</html>

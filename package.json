@@ -1,0 +1,20 @@
+{
+  "name": "accounts-api",
+  "version": "1.0.0",
+  "description": "Accounts API",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "Renato Lins",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "swagger-ui-express": "^4.1.5",
+    "winston": "^3.3.3"
+  }
+}
