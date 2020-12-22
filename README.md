@@ -23,8 +23,8 @@ You can test this API by browsing the Swagger documentation provided here. If yo
 create requests to API endpoints by using applications like Insomnia or Postman. Here is the list of
 http verbs followed by the available endpoints:
 
-- ```GET /account``` - Brings all accounts
-- ```GET /account/{accountId}``` - Bring an account by Id
+- ```GET /account``` - Fetches all accounts
+- ```GET /account/{accountId}``` - Fetches an account by Id
 - ```POST /account``` - Creates a new account
 - ```PUT /account``` - Updates an account entirely
 - ```DELETE /account/{accountId}``` - Deletes an account
