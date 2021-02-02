@@ -9,20 +9,19 @@ const dataLocation = String(process.env.DATA_LOCATION);
 
 const getAccountsFullJson = async () => JSON.parse(await readFile(dataLocation, 'utf-8'));
 
-const isAccountIdValid = async (accountId) => {
+const accountsDetails = async (accountId = -1) => {
   const accountsFullJson = await getAccountsFullJson();
-  const isIdValid = accountsFullJson.accounts.some(account => account.id === accountId);
-  return isIdValid;
+  const isAccountValid = accountsFullJson.accounts.some(account => account.id === accountId);
+  return { isAccountValid, accountsFullJson };
 }
 
 export const getAccounts = async () => await getAccountsFullJson();
 
 export const getAccountById = async (accountId) => {
   if (isNaN(accountId)) throw ApiError.badRequest();
-  const isAccountValid = await isAccountIdValid(accountId);
+  const { isAccountValid, accountsFullJson } = await accountsDetails(accountId);
   if (!isAccountValid) throw ApiError.notFound();
 
-  const accountsFullJson = await getAccountsFullJson();
   const queriedAccount = accountsFullJson.accounts
     .find(account => account.id === accountId);
 
@@ -30,14 +29,21 @@ export const getAccountById = async (accountId) => {
 }
 
 export const createAccount = async (account) => {
+  console.log('aaaaaaaaaaaaaaaaaaa', account);
   const { name, balance } = account;
+  const accountBalance = Number(balance);
+  if (!name
+    || balance === undefined
+    || isNaN(accountBalance)
+  ) {
+    throw ApiError.badRequest();
+  }
 
-  if (!name || balance === undefined) throw ApiError.badRequest();
-  const accountsFullJson = await getAccountsFullJson();
+  const { accountsFullJson } = await accountsDetails();
   const newAccount = {
     id: accountsFullJson.nextId++,
     name,
-    balance
+    balance: accountBalance
   };
   accountsFullJson.accounts.push(newAccount);
 
@@ -48,10 +54,8 @@ export const createAccount = async (account) => {
 
 export const deleteAccountById = async (accountId) => {
   if (isNaN(accountId)) throw ApiError.badRequest();
-  const isAccountValid = await isAccountIdValid(accountId);
+  const { isAccountValid, accountsFullJson } = await accountsDetails(accountId);
   if (!isAccountValid) throw ApiError.notFound();
-
-  const accountsFullJson = await getAccountsFullJson();
 
   const accountsUpdated = accountsFullJson.accounts
     .filter(account => account.id !== accountId);
@@ -72,23 +76,23 @@ export const fullAccountUpdate = async (account) => {
     || isNaN(accountId)
     || !name
     || balance === undefined
-    || isNaN(accountBalance)) {
+    || isNaN(accountBalance)
+  ) {
     throw ApiError.badRequest();
   }
-  const isAccountValid = await isAccountIdValid(accountId);
+  const { isAccountValid, accountsFullJson } = await accountsDetails(accountId);
   if (!isAccountValid) throw ApiError.notFound();
 
-  const accountsFullJson = await getAccountsFullJson();
-
   const index = accountsFullJson.accounts
-    .findIndex(acc => acc.id === account.id);
+    .findIndex(acc => acc.id === accountId);
 
   const updatedAccount = {
-    id,
+    id: accountId,
     name,
-    balance
+    balance: accountBalance
   };
   accountsFullJson.accounts[index] = updatedAccount;
+
   await writeFile(dataLocation, JSON.stringify(accountsFullJson, null, 2));
 
   return JSON.stringify(updatedAccount);
@@ -104,10 +108,8 @@ export const updateAccountBalance = async (id, balance) => {
     || isNaN(newBalance)) {
     throw ApiError.badRequest();
   }
-  const isAccountValid = await isAccountIdValid(accountId);
+  const { isAccountValid, accountsFullJson } = await accountsDetails(accountId);
   if (!isAccountValid) throw ApiError.notFound();
-
-  const accountsFullJson = await getAccountsFullJson();
 
   const index = accountsFullJson.accounts
     .findIndex(acc => acc.id === accountId);
@@ -117,7 +119,7 @@ export const updateAccountBalance = async (id, balance) => {
   await writeFile(dataLocation, JSON.stringify(accountsFullJson, null, 2));
 
   const updatedAccount = { ...accountsFullJson.accounts[index] }
-  
+
   return JSON.stringify(updatedAccount);
 
 }

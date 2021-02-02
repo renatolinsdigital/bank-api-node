@@ -58,6 +58,7 @@ router.put('/', async (req, res, next) => {
   const account = req.body;
   try {
     const updatedAccount = await fullAccountUpdate(account);
+    console.log(updatedAccount);
     res.send(`Account ${account.id} has been fully updated`);
     logger.info(`PUT /account - ${updatedAccount}`);
   } catch (err) {
@@ -76,6 +77,7 @@ router.patch('/balance/:id', async (req, res, next) => {
     next(err);
   }
 });
+
 
 export default router;
 
