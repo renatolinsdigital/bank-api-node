@@ -1,13 +1,12 @@
 import express from 'express';
-import '../configs/global-consts.js';
-import '../configs/logger.js';
+import logger from '../configs/logger.js';
 import {
   getAccounts,
   getAccountById,
   createAccount,
   deleteAccountById,
-  fullUpdate,
-  balanceUpdate
+  fullAccountUpdate,
+  updateAccountBalance
 } from '../controllers/accountsController.js';
 
 const router = express.Router();
@@ -24,18 +23,10 @@ router.get('/', async (_, res, next) => {
 
 router.get('/:id', async (req, res, next) => {
   const accountId = Number(req.params?.id);
-  if (isNaN(accountId)) {
-    next(ERROR_MALFORMED_REQUEST);
-    return;
-  }
   try {
     const queriedAccount = await getAccountById(accountId);
-    if (!queriedAccount) {
-      next(ERROR_NOT_FOUND);
-      return;
-    }
     res.send(queriedAccount);
-    logger.info(`GET /account/${accountId}`);
+    logger.info(`GET /account/ - ${queriedAccount}`);
   } catch (err) {
     next(err);
   }
@@ -43,15 +34,10 @@ router.get('/:id', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   const account = req.body;
-  const { name, balance } = account;
-  if (!account || !name || balance === undefined) {
-    next(ERROR_MALFORMED_REQUEST);
-    return;
-  }
   try {
-    const newAccountAdded = await createAccount(name, balance);
-    res.send(newAccountAdded);
-    logger.info(`POST /account - ${JSON.stringify(newAccountAdded)}`);
+    const createdAccount = await createAccount(account);
+    res.status(201).send(createdAccount);
+    logger.info(`POST /account - ${createdAccount}`);
   } catch (err) {
     next(err);
   }
@@ -59,18 +45,10 @@ router.post('/', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
   const accountId = Number(req.params?.id);
-  if (isNaN(accountId)) {
-    next(ERROR_MALFORMED_REQUEST);
-    return;
-  }
   try {
-    const deletionError = await deleteAccountById(accountId);
-    if (deletionError) {
-      next(deletionError);
-      return;
-    }
-    res.status(202).send(`Account ${accountId} has been deleted`);
-    logger.info(`DELETE /account/${accountId}`);
+    const deletedAccountId = await deleteAccountById(accountId);
+    res.status(202).send(`Account ${deletedAccountId} has been deleted`);
+    logger.info(`DELETE /account/${deletedAccountId}`);
   } catch (err) {
     next(err);
   }
@@ -78,49 +56,25 @@ router.delete('/:id', async (req, res, next) => {
 
 router.put('/', async (req, res, next) => {
   const account = req.body;
-  const { id, name, balance } = account;
-  if (!account || id === undefined || !name || balance === undefined) {
-    next(ERROR_MALFORMED_REQUEST);
-    return;
-  }
   try {
-    const fullUpdateError = await fullUpdate(account);
-    if (fullUpdateError) {
-      next(fullUpdateError);
-      return;
-    }
+    const updatedAccount = await fullAccountUpdate(account);
     res.send(`Account ${account.id} has been fully updated`);
-    logger.info(`PUT /account - ${JSON.stringify(account)}`);
+    logger.info(`PUT /account - ${updatedAccount}`);
   } catch (err) {
     next(err);
   }
 });
 
 router.patch('/balance/:id', async (req, res, next) => {
-  const accountId = Number(req.params?.id);
+  const accountId = req.params?.id;
   const { newBalance } = req.body;
-  if (isNaN(accountId) || newBalance === undefined) {
-    next(ERROR_MALFORMED_REQUEST);
-    return;
-  }
   try {
-    const balanceUpdateError = await balanceUpdate(accountId, newBalance);
-    if (balanceUpdateError) {
-      next(balanceUpdateError);
-      return;
-    }
-    res.send(`Account ${accountId} balance has been updated`);
-    logger.info(`PATCH /balance/${accountId} - balance: ${newBalance}`);
+    const updatedAccount = await updateAccountBalance(accountId, newBalance);
+    res.send(`Balance for account ${accountId} has been updated`);
+    logger.info(`PATCH /balance/ - ${updatedAccount}`);
   } catch (err) {
     next(err);
   }
-});
-
-// Error handling
-
-router.use((err, _, res, next) => {
-  logger.error(err.message);
-  res.status(err.status || 400).send({ error: err.message });
 });
 
 export default router;

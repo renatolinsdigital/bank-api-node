@@ -1,66 +1,124 @@
 import { promises as fs } from 'fs';
-import '../configs/global-consts.js';
 const { readFile, writeFile } = fs;
+import dotenv from 'dotenv';
+import ApiError from '../models/ApiError.js';
 
-export const getAccounts = async () => {
-  const accountsFullJson = JSON.parse(await readFile(DATA_LOCATION, 'utf-8'));
-  return accountsFullJson;
+dotenv.config();
+
+const dataLocation = String(process.env.DATA_LOCATION);
+
+const getAccountsFullJson = async () => JSON.parse(await readFile(dataLocation, 'utf-8'));
+
+const isAccountIdValid = async (accountId) => {
+  const accountsFullJson = await getAccountsFullJson();
+  const isIdValid = accountsFullJson.accounts.some(account => account.id === accountId);
+  return isIdValid;
 }
+
+export const getAccounts = async () => await getAccountsFullJson();
 
 export const getAccountById = async (accountId) => {
-  const accountsFullJson = JSON.parse(await readFile(DATA_LOCATION, 'utf-8'));
+  if (isNaN(accountId)) throw ApiError.badRequest();
+  const isAccountValid = await isAccountIdValid(accountId);
+  if (!isAccountValid) throw ApiError.notFound();
+
+  const accountsFullJson = await getAccountsFullJson();
   const queriedAccount = accountsFullJson.accounts
     .find(account => account.id === accountId);
-  return queriedAccount;
+
+  return JSON.stringify(queriedAccount);
 }
 
-export const createAccount = async (name, balance) => {
-  const accountsFullJson = JSON.parse(await readFile(DATA_LOCATION, 'utf-8'));
+export const createAccount = async (account) => {
+  const { name, balance } = account;
+
+  if (!name || balance === undefined) throw ApiError.badRequest();
+  const accountsFullJson = await getAccountsFullJson();
   const newAccount = {
     id: accountsFullJson.nextId++,
     name,
     balance
   };
   accountsFullJson.accounts.push(newAccount);
-  await writeFile(DATA_LOCATION, JSON.stringify(accountsFullJson, null, 2));
-  return newAccount;
+
+  await writeFile(dataLocation, JSON.stringify(accountsFullJson, null, 2));
+
+  return JSON.stringify(newAccount);
 }
 
 export const deleteAccountById = async (accountId) => {
-  const accountsFullJson = JSON.parse(await readFile(DATA_LOCATION, 'utf-8'));
-  const isAccountIdValid = accountsFullJson.accounts.some(account => account.id === accountId);
-  if (!isAccountIdValid) return ERROR_NOT_FOUND;
+  if (isNaN(accountId)) throw ApiError.badRequest();
+  const isAccountValid = await isAccountIdValid(accountId);
+  if (!isAccountValid) throw ApiError.notFound();
+
+  const accountsFullJson = await getAccountsFullJson();
+
   const accountsUpdated = accountsFullJson.accounts
     .filter(account => account.id !== accountId);
   const accountsFullJsonUpdated = {
     nextId: accountsFullJson.nextId,
     accounts: accountsUpdated
   };
-  await writeFile(DATA_LOCATION, JSON.stringify(accountsFullJsonUpdated, null, 2));
+  await writeFile(dataLocation, JSON.stringify(accountsFullJsonUpdated, null, 2));
+  return accountId;
 }
 
-export const fullUpdate = async (account) => {
+export const fullAccountUpdate = async (account) => {
   const { id, name, balance } = account;
-  const accountsFullJson = JSON.parse(await readFile(DATA_LOCATION, 'utf-8'));
+  const accountId = Number(id);
+  const accountBalance = Number(balance);
+
+  if (id === undefined
+    || isNaN(accountId)
+    || !name
+    || balance === undefined
+    || isNaN(accountBalance)) {
+    throw ApiError.badRequest();
+  }
+  const isAccountValid = await isAccountIdValid(accountId);
+  if (!isAccountValid) throw ApiError.notFound();
+
+  const accountsFullJson = await getAccountsFullJson();
+
   const index = accountsFullJson.accounts
     .findIndex(acc => acc.id === account.id);
-  if (index === -1) return ERROR_NOT_FOUND;
+
   const updatedAccount = {
     id,
     name,
     balance
   };
   accountsFullJson.accounts[index] = updatedAccount;
-  await writeFile(DATA_LOCATION, JSON.stringify(accountsFullJson, null, 2));
+  await writeFile(dataLocation, JSON.stringify(accountsFullJson, null, 2));
+
+  return JSON.stringify(updatedAccount);
 }
 
-export const balanceUpdate = async (accountId, newBalance) => {
-  const accountsFullJson = JSON.parse(await readFile(DATA_LOCATION, 'utf-8'));
+export const updateAccountBalance = async (id, balance) => {
+  const accountId = Number(id);
+  const newBalance = Number(balance);
+
+  if (id === undefined
+    || isNaN(accountId)
+    || balance === undefined
+    || isNaN(newBalance)) {
+    throw ApiError.badRequest();
+  }
+  const isAccountValid = await isAccountIdValid(accountId);
+  if (!isAccountValid) throw ApiError.notFound();
+
+  const accountsFullJson = await getAccountsFullJson();
+
   const index = accountsFullJson.accounts
     .findIndex(acc => acc.id === accountId);
-  if (index === -1) return ERROR_NOT_FOUND;
+
   accountsFullJson.accounts[index].balance = newBalance;
-  await writeFile(DATA_LOCATION, JSON.stringify(accountsFullJson, null, 2));
+
+  await writeFile(dataLocation, JSON.stringify(accountsFullJson, null, 2));
+
+  const updatedAccount = { ...accountsFullJson.accounts[index] }
+  
+  return JSON.stringify(updatedAccount);
 
 }
 

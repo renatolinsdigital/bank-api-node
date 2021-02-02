@@ -2,14 +2,13 @@ import winston from 'winston';
 
 const { createLogger, transports } = winston;
 const { combine, timestamp, printf, label } = winston.format;
-const today = new Date().toLocaleDateString().replaceAll('/','-');
-console.log(today);
+const today = new Date().toLocaleDateString().replaceAll('/', '-');
 
 const myFormat = printf(({ level, message, label, timestamp }) => {
   return `${timestamp} [${label}] ${level}: ${message}`
 });
 
-global.logger = createLogger({
+const logger = createLogger({
   level: 'silly',
   format: combine(
     label({ label: 'Bank API' }),
@@ -17,8 +16,19 @@ global.logger = createLogger({
     myFormat,
   ),
   transports: [
-    new transports.Console({ level: 'info' }),
-    new transports.File({ filename: `logs/${today}/api-${today}.log` }),
+    new transports.Console(
+      {
+        level: 'info'
+      }
+    ),
+    new transports.File(
+      {
+        level: 'info',
+        filename: `logs/${today}/api-${today}.log`
+      }
+    ),
   ]
 });
+
+export default logger;
 
