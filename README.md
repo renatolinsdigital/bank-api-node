@@ -9,13 +9,23 @@ This project is about a CRUD API that deals with accounts data structure. It use
  - Documentation: Swagger
  - Log lib: Winston
 
-## Running this project
+## Running this project locally
 
-Download/clone this project and run the following commands:
+ - 1 - Download/clone this project and create a .env file in root folder, having these variables:
+
+```yaml
+    DATA_PATH="data"
+    DATA_LOCATION="data/accounts.json"
+    PORT=8080
+```
+
+ - 2 - Open a terminal in project´s root folder and run the following commands:
 
 - ```$ npm install```
 - ```$ npm install -g nodemon``` (if nodemon isn´t installed)
 - ```$ nodemon server```
+
+Now API can be consumed in **localhost:8080**
 
 ## Consuming the API
 
