@@ -9,16 +9,20 @@
   "tags": [
     {
       "name": "account",
-      "description": "Account management endpoint"
+      "description": "Accounts management endpoint"
     }
   ],
   "paths": {
     "/account": {
       "get": {
-        "tags": ["account"],
+        "tags": [
+          "account"
+        ],
         "summary": "Get existing accounts list",
         "description": "Get existing accounts list",
-        "produces": ["application/json"],
+        "produces": [
+          "application/json"
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -31,17 +35,28 @@
           },
           "400": {
             "schema": {
-              "$ref": "#/definitions/GenericError"
+              "$ref": "#/definitions/BadRequestError"
+            }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/InternalError"
             }
           }
         }
       },
       "post": {
-        "tags": ["account"],
+        "tags": [
+          "account"
+        ],
         "summary": "Create a new account",
         "description": "Create a new account",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "in": "body",
@@ -54,7 +69,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful operation",
             "schema": {
               "$ref": "#/definitions/AccountWithId"
@@ -62,16 +77,25 @@
           },
           "400": {
             "schema": {
-              "$ref": "#/definitions/GenericError"
+              "$ref": "#/definitions/BadRequestError"
+            }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/InternalError"
             }
           }
         }
       },
       "put": {
-        "tags": ["account"],
+        "tags": [
+          "account"
+        ],
         "summary": "Updates an account entirely",
         "description": "Updates an account entirely",
-        "consumes": ["application/json"],
+        "consumes": [
+          "application/json"
+        ],
         "parameters": [
           {
             "in": "body",
@@ -89,12 +113,17 @@
           },
           "400": {
             "schema": {
-              "$ref": "#/definitions/GenericError"
+              "$ref": "#/definitions/BadRequestError"
             }
           },
           "404": {
             "schema": {
               "$ref": "#/definitions/NotFoundError"
+            }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/InternalError"
             }
           }
         }
@@ -102,10 +131,14 @@
     },
     "/account/{accountId}": {
       "get": {
-        "tags": ["account"],
+        "tags": [
+          "account"
+        ],
         "summary": "Get an existing account by Id",
         "description": "Get an existing account by Id",
-        "produces": ["application/json"],
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "accountId",
@@ -125,21 +158,30 @@
           },
           "400": {
             "schema": {
-              "$ref": "#/definitions/GenericError"
+              "$ref": "#/definitions/BadRequestError"
             }
           },
           "404": {
             "schema": {
               "$ref": "#/definitions/NotFoundError"
             }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/InternalError"
+            }
           }
         }
       },
       "delete": {
-        "tags": ["account"],
+        "tags": [
+          "account"
+        ],
         "summary": "Deletes an existing account by Id",
         "description": "Deletes an existing account by Id",
-        "produces": ["text/plain"],
+        "produces": [
+          "text/plain"
+        ],
         "parameters": [
           {
             "name": "accountId",
@@ -159,12 +201,17 @@
           },
           "400": {
             "schema": {
-              "$ref": "#/definitions/GenericError"
+              "$ref": "#/definitions/BadRequestError"
             }
           },
           "404": {
             "schema": {
               "$ref": "#/definitions/NotFoundError"
+            }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/InternalError"
             }
           }
         }
@@ -172,11 +219,17 @@
     },
     "/account/balance/{accountId}": {
       "patch": {
-        "tags": ["account/balance"],
+        "tags": [
+          "account/balance"
+        ],
         "summary": "Updates an existing account balance",
         "description": "Updates an existing account balance",
-        "consumes": ["application/json"],
-        "produces": ["text/plain"],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "text/plain"
+        ],
         "parameters": [
           {
             "name": "accountId",
@@ -235,7 +288,9 @@
       "allOf": [
         {
           "type": "object",
-          "required": ["id"],
+          "required": [
+            "id"
+          ],
           "properties": {
             "id": {
               "type": "integer",
@@ -261,12 +316,21 @@
       "type": "string",
       "example": "Operation successful"
     },
-    "GenericError": {
+    "BadRequestError": {
       "type": "object",
       "properties": {
         "message": {
           "type": "string",
-          "example": "Malformed request or error occurred"
+          "example": "Bad request. Check your request and try again"
+        }
+      }
+    },
+    "InternalError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Internal server error. Try later in a few moments"
         }
       }
     },
