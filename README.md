@@ -1,10 +1,12 @@
 # Bank API with CRUD functionallity
 
-This project is about a CRUD API that deals with accounts data structure. It uses a .json file for storing data.
+This project is about a CRUD API that deals with accounts data structure. It uses a .json file for storing data. 
+
+![Documentation print](print/swagger_doc.png)
 
 ## What was used in this project:
 
- - Language: Javascript(ES6) 
+ - Language: Javascript(ES6+) 
  - Stack: Nodejs + Express
  - Documentation: Swagger
  - Log lib: Winston
@@ -25,7 +27,7 @@ This project is about a CRUD API that deals with accounts data structure. It use
 - ```$ npm install -g nodemon``` (if nodemon isn´t installed)
 - ```$ nodemon server```
 
-Now API can be consumed in **localhost:8080**
+Now API can be consumed in **localhost:8080** and Swagger docs can be viewed in **localhost:8080/swagger**
 
 ## Consuming the API
 
@@ -42,8 +44,9 @@ http verbs followed by the available endpoints:
 
 ## Key Features
 
- - Data persistence in .json with Node I/O operations
- - An index.html bringing some API data info
- - All actions captured into daily logs
- - Every endpoint is fully documented with Swagger
+ - Routing for CRUD operations with REST verbs
+ - Data persistence in a .json file
+ - Daily logs with configured levels
+ - Fully documented with Swagger
+ - Error handling with custom errors throwing
 
