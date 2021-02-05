@@ -13,7 +13,7 @@ This project is about a CRUD API that deals with accounts data structure. It use
 
 ## Running this project locally
 
- - 1 - Download or clone this project and have a .env file in root folder, having these variables:
+ - 1 - Download or clone this project and rename .env.example to .env, setting variables to:
 
 ```yaml
     DATA_PATH="data"
