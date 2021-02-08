@@ -25,7 +25,7 @@ This project is about a CRUD API that deals with accounts data structure. It use
 
 - ```$ npm install```
 - ```$ npm install -g nodemon``` (if nodemon isn´t installed)
-- ```$ nodemon server```
+- ```$ nodemon```
 
 Now API can be consumed in **localhost:8080** and Swagger docs can be viewed in **localhost:8080/swagger**
 
@@ -50,5 +50,5 @@ http verbs followed by the available endpoints:
  - Data persistence in a .json file
  - Daily logs with configured levels
  - Fully documented with Swagger
- - Error handling with custom errors throwing
+ - Errors handling with API´s custom messages
 
