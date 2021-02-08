@@ -7,7 +7,8 @@ import {
   deleteAccountById,
   fullAccountUpdate,
   withDrawFromAccount,
-  depositOnAccount
+  depositOnAccount,
+  transferBetweenAccounts
 } from '../controllers/accountsController.js';
 
 const router = express.Router();
@@ -47,9 +48,9 @@ router.post('/', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
-    const deletedAccountId = await deleteAccountById(id);
-    res.status(202).send(`Account ${deletedAccountId} has been deleted`);
-    logger.info(`DELETE /account/${deletedAccountId}`);
+    await deleteAccountById(id);
+    res.status(202).send(`Account ${id} has been deleted`);
+    logger.info(`DELETE /account/${id}`);
   } catch (err) {
     next(err);
   }
@@ -68,12 +69,12 @@ router.put('/', async (req, res, next) => {
 });
 
 router.patch('/withdraw/:id', async (req, res, next) => {
-  const accountId = req.params?.id;
+  const { id } = req.params;
   const { amount } = req.body;
   try {
-    const updatedAccount = await withDrawFromAccount(accountId, amount);
+    const updatedAccount = await withDrawFromAccount(id, amount);
     const updatedBalance = JSON.parse(updatedAccount).balance;
-    res.send(`Account ${accountId} new balance: ${updatedBalance}`);
+    res.send(`Account ${id} new balance: ${updatedBalance}`);
     logger.info(`PATCH /withdraw/ - ${updatedAccount}`);
   } catch (err) {
     next(err);
@@ -81,13 +82,31 @@ router.patch('/withdraw/:id', async (req, res, next) => {
 });
 
 router.patch('/deposit/:id', async (req, res, next) => {
-  const accountId = req.params?.id;
+  const { id } = req.params;
   const { amount } = req.body;
   try {
-    const updatedAccount = await depositOnAccount(accountId, amount);
+    const updatedAccount = await depositOnAccount(id, amount);
     const updatedBalance = JSON.parse(updatedAccount).balance;
-    res.send(`Account ${accountId} new balance: ${updatedBalance}`);
+    res.send(`Account ${id} new balance: ${updatedBalance}`);
     logger.info(`PATCH /deposit/ - ${updatedAccount}`);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/transfer', async (req, res, next) => {
+  const { fromAccountWithId, toAccountWithId } = req.query;
+  const { amount } = req.body;
+  try {
+    const { fromAccount, toAccount } =
+      await transferBetweenAccounts(fromAccountWithId, toAccountWithId, amount);
+    const transferResults =
+      [
+        `Account ${fromAccountWithId} balance: ${fromAccount.balance} / `,
+        `Account ${toAccountWithId} balance: ${toAccount.balance}`
+      ].join('');
+    res.send(transferResults);
+    logger.info(`PATCH /transfer - ${transferResults}`);
   } catch (err) {
     next(err);
   }
