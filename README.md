@@ -36,11 +36,13 @@ create requests to API endpoints by using applications like Insomnia or Postman.
 http verbs followed by the available endpoints:
 
 - ```GET /account``` - Fetches all accounts
-- ```GET /account/{accountId}``` - Fetches an account by Id
+- ```GET /account/{id}``` - Fetches an account by Id
 - ```POST /account``` - Creates a new account
 - ```PUT /account``` - Updates an account entirely
-- ```DELETE /account/{accountId}``` - Deletes an account
-- ```PATCH /account/balance/{accountId}``` - Updates an account´s balance
+- ```DELETE /account/{id}``` - Deletes an account
+- ```PATCH /account/withdraw/{id}``` - Withdraws from accounts
+- ```PATCH /account/deposit/{id}``` - Deposits on accounts
+- ```PATCH /account/transfer?fromAccountWithId={id}&toAccountWithId={id}``` - Transfer between accounts
 
 ## Key Features
 
