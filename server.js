@@ -13,7 +13,8 @@ const port = process.env.PORT;
 const dataLocation = process.env.DATA_LOCATION;
 const dataPath = process.env.DATA_PATH;
 const server = express();
-const swaggerDocument = JSON.parse(await readFile('./swagger/swagger.json', 'utf-8'));
+const swaggerDocument = JSON
+  .parse(await readFile('./swagger/swagger.json', 'utf-8'));
 
 server.use(express.json());
 server.use(express.static('public'));
@@ -39,9 +40,13 @@ const setInitialData = async () => {
   }
 };
 
-const initServer = () => {
-  setInitialData();
-  logger.info(`API started on Port ${port}`);
+const init = async () => {
+  await setInitialData();
+  server.listen(port, () => {
+    logger.info(`API started on Port ${port}`);
+  });
 }
 
-server.listen(port, initServer);
+init();
+
+

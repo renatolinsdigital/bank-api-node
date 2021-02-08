@@ -1,19 +1,20 @@
 import express from 'express';
 import logger from '../configs/logger.js';
 import {
-  getAccounts,
+  getAllAccounts,
   getAccountById,
   createAccount,
   deleteAccountById,
   fullAccountUpdate,
-  updateAccountBalance
+  withDrawFromAccount,
+  depositOnAccount
 } from '../controllers/accountsController.js';
 
 const router = express.Router();
 
 router.get('/', async (_, res, next) => {
   try {
-    const accountsFullJson = await getAccounts();
+    const accountsFullJson = await getAllAccounts();
     res.send(accountsFullJson.accounts);
     logger.info('GET /account');
   } catch (err) {
@@ -22,9 +23,9 @@ router.get('/', async (_, res, next) => {
 });
 
 router.get('/:id', async (req, res, next) => {
-  const accountId = Number(req.params?.id);
+  const { id } = req.params;
   try {
-    const queriedAccount = await getAccountById(accountId);
+    const queriedAccount = await getAccountById(id);
     res.send(queriedAccount);
     logger.info(`GET /account/ - ${queriedAccount}`);
   } catch (err) {
@@ -44,9 +45,9 @@ router.post('/', async (req, res, next) => {
 });
 
 router.delete('/:id', async (req, res, next) => {
-  const accountId = Number(req.params?.id);
+  const { id } = req.params;
   try {
-    const deletedAccountId = await deleteAccountById(accountId);
+    const deletedAccountId = await deleteAccountById(id);
     res.status(202).send(`Account ${deletedAccountId} has been deleted`);
     logger.info(`DELETE /account/${deletedAccountId}`);
   } catch (err) {
@@ -66,18 +67,31 @@ router.put('/', async (req, res, next) => {
   }
 });
 
-router.patch('/balance/:id', async (req, res, next) => {
+router.patch('/withdraw/:id', async (req, res, next) => {
   const accountId = req.params?.id;
-  const { newBalance } = req.body;
+  const { amount } = req.body;
   try {
-    const updatedAccount = await updateAccountBalance(accountId, newBalance);
-    res.send(`Balance for account ${accountId} has been updated`);
-    logger.info(`PATCH /balance/ - ${updatedAccount}`);
+    const updatedAccount = await withDrawFromAccount(accountId, amount);
+    const updatedBalance = JSON.parse(updatedAccount).balance;
+    res.send(`Account ${accountId} new balance: ${updatedBalance}`);
+    logger.info(`PATCH /withdraw/ - ${updatedAccount}`);
   } catch (err) {
     next(err);
   }
 });
 
+router.patch('/deposit/:id', async (req, res, next) => {
+  const accountId = req.params?.id;
+  const { amount } = req.body;
+  try {
+    const updatedAccount = await depositOnAccount(accountId, amount);
+    const updatedBalance = JSON.parse(updatedAccount).balance;
+    res.send(`Account ${accountId} new balance: ${updatedBalance}`);
+    logger.info(`PATCH /deposit/ - ${updatedAccount}`);
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default router;
 

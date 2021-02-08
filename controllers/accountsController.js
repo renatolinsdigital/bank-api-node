@@ -15,9 +15,11 @@ const accountsDetails = async (accountId = -1) => {
   return { isAccountValid, accountsFullJson };
 }
 
-export const getAccounts = async () => await getAccountsFullJson();
+export const getAllAccounts = async () => await getAccountsFullJson();
 
-export const getAccountById = async (accountId) => {
+export const getAccountById = async (id) => {
+  const accountId = Number(id);
+
   if (isNaN(accountId)) throw ApiError.badRequest();
   const { isAccountValid, accountsFullJson } = await accountsDetails(accountId);
   if (!isAccountValid) throw ApiError.notFound();
@@ -29,9 +31,9 @@ export const getAccountById = async (accountId) => {
 }
 
 export const createAccount = async (account) => {
-  console.log('aaaaaaaaaaaaaaaaaaa', account);
   const { name, balance } = account;
   const accountBalance = Number(balance);
+
   if (!name
     || balance === undefined
     || isNaN(accountBalance)
@@ -52,7 +54,9 @@ export const createAccount = async (account) => {
   return JSON.stringify(newAccount);
 }
 
-export const deleteAccountById = async (accountId) => {
+export const deleteAccountById = async (id) => {
+  const accountId = Number(id);
+
   if (isNaN(accountId)) throw ApiError.badRequest();
   const { isAccountValid, accountsFullJson } = await accountsDetails(accountId);
   if (!isAccountValid) throw ApiError.notFound();
@@ -98,14 +102,14 @@ export const fullAccountUpdate = async (account) => {
   return JSON.stringify(updatedAccount);
 }
 
-export const updateAccountBalance = async (id, balance) => {
+export const withDrawFromAccount = async (id, amount) => {
   const accountId = Number(id);
-  const newBalance = Number(balance);
+  const operationAmount = Number(amount);
 
   if (id === undefined
     || isNaN(accountId)
-    || balance === undefined
-    || isNaN(newBalance)) {
+    || operationAmount === undefined
+    || isNaN(operationAmount)) {
     throw ApiError.badRequest();
   }
   const { isAccountValid, accountsFullJson } = await accountsDetails(accountId);
@@ -114,7 +118,11 @@ export const updateAccountBalance = async (id, balance) => {
   const index = accountsFullJson.accounts
     .findIndex(acc => acc.id === accountId);
 
-  accountsFullJson.accounts[index].balance = newBalance;
+  if ((accountsFullJson.accounts[index].balance - operationAmount) < 0) {
+    throw ApiError.notEnoughFunds();
+  }
+
+  accountsFullJson.accounts[index].balance -= operationAmount;
 
   await writeFile(dataLocation, JSON.stringify(accountsFullJson, null, 2));
 
@@ -123,4 +131,33 @@ export const updateAccountBalance = async (id, balance) => {
   return JSON.stringify(updatedAccount);
 
 }
+
+export const depositOnAccount = async (id, amount) => {
+  const accountId = Number(id);
+  const operationAmount = Number(amount);
+
+  if (id === undefined
+    || isNaN(accountId)
+    || operationAmount === undefined
+    || isNaN(operationAmount)) {
+    throw ApiError.badRequest();
+  }
+  const { isAccountValid, accountsFullJson } = await accountsDetails(accountId);
+  if (!isAccountValid) throw ApiError.notFound();
+
+  const index = accountsFullJson.accounts
+    .findIndex(acc => acc.id === accountId);
+
+  accountsFullJson.accounts[index].balance += operationAmount;
+
+  await writeFile(dataLocation, JSON.stringify(accountsFullJson, null, 2));
+
+  const updatedAccount = { ...accountsFullJson.accounts[index] }
+
+  return JSON.stringify(updatedAccount);
+
+}
+
+
+
 
