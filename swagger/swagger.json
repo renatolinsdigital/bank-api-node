@@ -3,7 +3,7 @@
   "info": {
     "description": "Bank API with CRUD functionallity",
     "version": "1.0.0",
-    "title": "Bank API"
+    "title": "Bank API by Renato Lins"
   },
   "host": "localhost:8080",
   "tags": [

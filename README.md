@@ -42,7 +42,7 @@ http verbs followed by the available endpoints:
 - ```DELETE /account/{id}``` - Deletes an account
 - ```PATCH /account/withdraw/{id}``` - Withdraws from accounts
 - ```PATCH /account/deposit/{id}``` - Deposits on accounts
-- ```PATCH /account/transfer?fromAccountWithId={id}&toAccountWithId={id}``` - Transfers between accounts
+- ```PATCH /account/transfer?fromAccountWithId={fromId}&toAccountWithId={toId}``` - Transfers between accounts
 
 ## Key Features
 
