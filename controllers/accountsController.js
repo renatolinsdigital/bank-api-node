@@ -28,7 +28,9 @@ export const getAccountById = async (id) => {
   const accountId = Number(id);
 
   if (isNaN(accountId)) throw ApiError.badRequest();
+
   const { isEveryIdValid, accountsFullJson } = await accountsDetails(accountId);
+
   if (!isEveryIdValid) throw ApiError.notFound();
 
   const queriedAccount = accountsFullJson.accounts
@@ -49,6 +51,7 @@ export const createAccount = async (account) => {
   }
 
   const { accountsFullJson } = await accountsDetails();
+
   const newAccount = {
     id: accountsFullJson.nextId++,
     name,
@@ -65,7 +68,9 @@ export const deleteAccountById = async (id) => {
   const accountId = Number(id);
 
   if (isNaN(accountId)) throw ApiError.badRequest();
+
   const { isEveryIdValid, accountsFullJson } = await accountsDetails(accountId);
+
   if (!isEveryIdValid) throw ApiError.notFound();
 
   const accountsUpdated = accountsFullJson.accounts
@@ -92,7 +97,9 @@ export const fullAccountUpdate = async (account) => {
   ) {
     throw ApiError.badRequest();
   }
+
   const { isEveryIdValid, accountsFullJson } = await accountsDetails(accountId);
+
   if (!isEveryIdValid) throw ApiError.notFound();
 
   const index = accountsFullJson.accounts
@@ -120,10 +127,11 @@ export const withDrawFromAccount = async (id, amount) => {
     || isNaN(operationAmount)
     || operationAmount < 1
   ) {
-
     throw ApiError.badRequest();
   }
+
   const { isEveryIdValid, accountsFullJson } = await accountsDetails(accountId);
+
   if (!isEveryIdValid) throw ApiError.notFound();
 
   const index = accountsFullJson.accounts

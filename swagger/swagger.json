@@ -217,13 +217,13 @@
         }
       }
     },
-    "/account/balance/{accountId}": {
+    "/account/withdraw/{id}": {
       "patch": {
         "tags": [
-          "account/balance"
+          "account"
         ],
-        "summary": "Updates an existing account balance",
-        "description": "Updates an existing account balance",
+        "summary": "Withdraws from accounts",
+        "description": "Withdraws from accounts",
         "consumes": [
           "application/json"
         ],
@@ -232,7 +232,7 @@
         ],
         "parameters": [
           {
-            "name": "accountId",
+            "name": "id",
             "in": "path",
             "description": "Account ID to be informed",
             "required": "true",
@@ -241,11 +241,11 @@
           },
           {
             "in": "body",
-            "name": "body",
-            "description": "Account object",
+            "name": "amount",
+            "description": "Operation amount",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/NewBalance"
+              "$ref": "#/definitions/Amount"
             }
           }
         ],
@@ -258,7 +258,129 @@
           },
           "400": {
             "schema": {
-              "$ref": "#/definitions/GenericError"
+              "$ref": "#/definitions/BadRequestError"
+            }
+          },
+          "403": {
+            "schema": {
+              "$ref": "#/definitions/NotEnoughFunds"
+            }
+          },
+          "404": {
+            "schema": {
+              "$ref": "#/definitions/NotFoundError"
+            }
+          }
+        }
+      }
+    },
+    "/account/deposit/{id}": {
+      "patch": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Deposits on accounts",
+        "description": "Deposits on accounts",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Account ID to be informed",
+            "required": "true",
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "in": "body",
+            "name": "amount",
+            "description": "Operation amount",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Amount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/TextResponse"
+            }
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/BadRequestError"
+            }
+          },
+          "404": {
+            "schema": {
+              "$ref": "#/definitions/NotFoundError"
+            }
+          }
+        }
+      }
+    },
+    "/account/transfer?fromAccountWithId={fromId}&toAccountWithId={toId}": {
+      "patch": {
+        "tags": [
+          "account"
+        ],
+        "summary": "Transfers between accounts",
+        "description": "Transfers between accounts",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [
+          {
+            "name": "fromId",
+            "in": "path",
+            "description": "Account ID for withdrawal",
+            "required": "true",
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "toId",
+            "in": "path",
+            "description": "Account ID for deposit",
+            "required": "true",
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "in": "body",
+            "name": "amount",
+            "description": "Operation amount",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Amount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/TextResponse"
+            }
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/BadRequestError"
+            }
+          },
+          "403": {
+            "schema": {
+              "$ref": "#/definitions/NotEnoughFunds"
             }
           },
           "404": {
@@ -303,12 +425,12 @@
         }
       ]
     },
-    "NewBalance": {
+    "Amount": {
       "type": "object",
       "properties": {
-        "newBalance": {
+        "amount": {
           "type": "number",
-          "example": 900.0
+          "example": 120
         }
       }
     },
@@ -322,6 +444,15 @@
         "message": {
           "type": "string",
           "example": "Bad request. Check your request and try again"
+        }
+      }
+    },
+    "NotEnoughFunds": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Withdrawal error - not enough founds"
         }
       }
     },

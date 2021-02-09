@@ -96,6 +96,8 @@ router.patch('/deposit/:id', async (req, res, next) => {
 
 router.patch('/transfer', async (req, res, next) => {
   const { fromAccountWithId, toAccountWithId } = req.query;
+  console.log('fromAccountWithId', fromAccountWithId);
+  console.log('toAccountWithId', toAccountWithId);
   const { amount } = req.body;
   try {
     const { fromAccount, toAccount } =
