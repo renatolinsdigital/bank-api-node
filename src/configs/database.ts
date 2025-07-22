@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
-import { AccountsData } from '../types/account.js';
-import logger from './logger.js';
+import { AccountsData } from '../models/account.model';
+import logger from './logger';
 import path from 'path';
 import { fileURLToPath } from 'url';
 

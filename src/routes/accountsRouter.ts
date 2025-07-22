@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import logger from '../configs/logger.js';
+import logger from '../configs/logger';
 import {
   getAllAccounts,
   getAccountById,
@@ -9,8 +9,8 @@ import {
   withDrawFromAccount,
   depositOnAccount,
   transferBetweenAccounts
-} from '../controllers/accountsController.js';
-import { Account, AccountWithId } from '../types/account.js';
+} from '../controllers/accountsController';
+import { Account, AccountWithId } from '../models/account.model';
 
 const router = express.Router();
 

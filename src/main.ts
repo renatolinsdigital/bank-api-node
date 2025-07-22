@@ -1,14 +1,14 @@
 import express from 'express';
-import accountsRouter from './routes/accountsRouter.js';
+import accountsRouter from './routes/accountsRouter';
 import { promises as fs } from 'fs';
-import logger from './configs/logger.js';
+import logger from './configs/logger';
 import cors from 'cors';
-import errorHandler from './middlewares/errorHandler.js';
+import errorHandler from './middlewares/errorHandler';
 import swaggerUi from 'swagger-ui-express';
 import * as dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { setInitialData } from './configs/database.js';
+import { setInitialData } from './configs/database';
 
 // Get current file directory (ESM equivalent of __dirname)
 const __filename = fileURLToPath(import.meta.url);

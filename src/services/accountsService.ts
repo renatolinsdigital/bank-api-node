@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import * as dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { AccountsData, AccountWithId } from '../types/account.js';
+import { AccountsData, AccountWithId } from '../models/account.model';
 
 // Get current file directory (ESM equivalent of __dirname)
 const __filename = fileURLToPath(import.meta.url);

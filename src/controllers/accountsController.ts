@@ -1,6 +1,6 @@
-import ApiError from '../models/ApiError.js';
-import { Account, AccountWithId, TransferResult } from '../types/account.js';
-import { accountsDetails, getAccountsFullJson, writeAccountsData } from '../services/accountsService.js';
+import ApiError from '../models/ApiError';
+import { Account, AccountWithId, TransferResult } from '../models/account.model';
+import { accountsDetails, getAccountsFullJson, writeAccountsData } from '../services/accountsService';
 
 /**
  * Retrieves all accounts from the data store

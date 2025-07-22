@@ -3,7 +3,7 @@ import {
   ERROR_NOT_ENOUGH_FUNDS,
   ERROR_NOT_FOUND,
   ERROR_INTERNAL
-} from "../configs/userErrorMessages.js";
+} from "../configs/userErrorMessages";
 
 class ApiError extends Error {
   status: number;
