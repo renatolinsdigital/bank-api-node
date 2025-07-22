@@ -15,7 +15,7 @@ const { combine, timestamp, printf, label } = winston.format;
 const today: string = new Date().toLocaleDateString().replaceAll('/', '-');
 
 // Ensure logs directory exists
-const logDir: string = path.join(__dirname, '..', 'logs', today);
+const logDir: string = path.join(__dirname, '..', '..', 'logs', today);
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
