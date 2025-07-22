@@ -22,6 +22,18 @@ This project is a RESTful API that manages bank accounts data structures. It use
 - Error handling with custom error messages
 - TypeScript for type safety and better developer experience
 
+## Documentation
+
+Detailed documentation is available in the [docs](./docs) directory:
+
+- [Architecture Overview](./docs/architecture.md)
+- [API Endpoints](./docs/api-endpoints.md)
+- [Error Handling](./docs/error-handling.md)
+- [Logging](./docs/logging.md)
+- [Data Storage](./docs/data-storage.md)
+- [Express Implementation](./docs/express-implementation.md)
+- [Environment Configuration](./docs/environment-configuration.md)
+
 ## Running this project locally
 
 1. Clone this repository
