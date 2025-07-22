@@ -1,54 +1,89 @@
-# Bank API with CRUD functionallity
+# Bank API with CRUD functionality
 
-This project is about a CRUD API that deals with accounts data structure. It uses a .json file for storing data. 
+This project is a RESTful API that manages bank accounts data structures. It uses a JSON file for data persistence.
 
 ![Documentation print](print/swagger_doc.png)
 
-## What was used in this project:
+## Technology Stack
 
- - Language: Javascript(ES6+) 
- - Stack: Nodejs + Express
- - Documentation: Swagger
- - Log lib: Winston
+- Language: TypeScript
+- Runtime: Node.js
+- Framework: Express
+- Documentation: OpenAPI 3.0 (Swagger)
+- Logging: Winston
+- Testing: Jest
+
+## Features
+
+- RESTful API with CRUD operations
+- Persistent data storage using JSON files
+- Daily logging with configurable levels
+- Comprehensive API documentation with Swagger
+- Error handling with custom error messages
+- TypeScript for type safety and better developer experience
 
 ## Running this project locally
 
- - 1 - Download or clone this project and rename .env.example to .env, setting variables to:
+1. Clone this repository
+2. Set up environment variables:
 
-```yaml
-    DATA_PATH="data"
-    DATA_LOCATION="data/accounts.json"
-    PORT=8080
+```bash
+# Copy the example env file
+npm run prepare-env
 ```
 
- - 2 - Open a terminal in project´s root folder and run the following commands:
+This will create a `.env` file with the default values.
 
-- ```$ npm install```
-- ```$ npm install -g nodemon``` (if nodemon isn´t installed)
-- ```$ nodemon```
+3. Install dependencies and run the project:
 
-Now API can be consumed in **localhost:8080** and Swagger docs can be viewed in **localhost:8080/swagger**
+```bash
+# Install dependencies
+npm install
 
-## Consuming the API
+# For development (with auto-reload)
+npm run dev
 
-You can test this API by browsing the Swagger documentation provided here. If you prefer, you can also
-create requests to API endpoints by using applications like Insomnia or Postman. Here is the list of
-http verbs followed by the available endpoints:
+# For production (build first)
+npm run build
+npm start
+```
 
-- ```GET /account``` - Fetches all accounts
-- ```GET /account/{id}``` - Fetches an account by Id
-- ```POST /account``` - Creates a new account
-- ```PUT /account``` - Updates an account entirely
-- ```DELETE /account/{id}``` - Deletes an account
-- ```PATCH /account/withdraw/{id}``` - Withdraws from accounts
-- ```PATCH /account/deposit/{id}``` - Deposits on accounts
-- ```PATCH /account/transfer?fromAccountWithId={fromId}&toAccountWithId={toId}``` - Transfers between accounts
+The API will be available at **http://localhost:8080** and Swagger documentation at **http://localhost:8080/swagger**
+
+## API Endpoints
+
+- `GET /account` - Fetch all accounts
+- `GET /account/{id}` - Fetch an account by ID
+- `POST /account` - Create a new account
+- `PUT /account` - Update an account entirely
+- `DELETE /account/{id}` - Delete an account
+- `PATCH /account/withdraw/{id}` - Withdraw from account
+- `PATCH /account/deposit/{id}` - Deposit to account
+- `PATCH /account/transfer?fromAccountWithId={fromId}&toAccountWithId={toId}` - Transfer between accounts
+
+## Development
+
+### Building the project
+```bash
+npm run build
+```
+
+### Linting
+```bash
+npm run lint
+```
+
+### Running tests
+```bash
+npm test
+```
 
 ## Key Features
 
- - Routing for CRUD operations with REST verbs
- - Data persistence in a .json file
- - Daily logs with configured levels
- - Fully documented with Swagger
- - Errors handling with API´s custom messages
-
+- Type-safe codebase with TypeScript
+- Modular architecture with separation of concerns
+- Comprehensive error handling
+- API documentation with Swagger/OpenAPI 3.0
+- Environment-based configuration
+- Unit tests with Jest
+- Development workflow with nodemon
