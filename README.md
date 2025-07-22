@@ -90,6 +90,25 @@ npm run lint
 npm test
 ```
 
+### Stopping the server
+
+If you need to free up the port (8080 by default):
+
+```bash
+# Find the process using the port
+lsof -i :8080    # On macOS/Linux
+netstat -ano | findstr :8080    # On Windows
+
+# Kill the process
+kill -9 PID    # On macOS/Linux (replace PID with the process ID)
+taskkill /F /PID <PID>    # On Windows (replace <PID> with the process ID)
+```
+
+You can also kill all Node.js processes on Windows with:
+```bash
+taskkill /F /IM node.exe
+```
+
 ## Key Features
 
 - Type-safe codebase with TypeScript

@@ -10,7 +10,8 @@
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "test": "jest",
-    "prepare-env": "node -e \"if (!fs.existsSync('.env')) fs.copyFileSync('.env.example', '.env');\""
+    "prepare-env": "node -e \"if (!fs.existsSync('.env')) fs.copyFileSync('.env.example', '.env');\"",
+    "generate-swagger": "npm run build && node generate-swagger.js"
   },
   "keywords": [],
   "author": "Renato Lins",
@@ -19,6 +20,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "swagger-autogen": "^2.23.7",
+    "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "winston": "^3.11.0"
   },
@@ -27,6 +30,7 @@
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.0",
+    "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.6",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",

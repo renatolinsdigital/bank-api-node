@@ -1,39 +1,42 @@
 import express from 'express';
 import accountsRouter from './routes/accountsRouter';
-import { promises as fs } from 'fs';
-import logger from './configs/logger';
+import logger from './config/logger';
 import cors from 'cors';
 import errorHandler from './middlewares/errorHandler';
 import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './config/swagger';
 import * as dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { setInitialData } from './configs/database';
-
-// Get current file directory (ESM equivalent of __dirname)
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { setInitialData } from './config/database';
 
 // Load environment variables
 dotenv.config();
 
 // Set up constants
-const port = process.env.PORT || 8080;
+const port = parseInt(process.env.PORT || '8080', 10);
 const server = express();
-
-// Load Swagger document
-const swaggerFilePath = path.join(__dirname, '..', 'src', 'swagger', 'swagger.json');
-const swaggerContent = await fs.readFile(swaggerFilePath, { encoding: 'utf-8' });
-const swaggerDocument = JSON.parse(swaggerContent);
 
 // Middleware setup
 server.use(express.json());
 server.use(express.static('public'));
-server.use(cors());
+server.use(cors({
+  origin: ['http://localhost:8080', 'http://127.0.0.1:8080'],
+  credentials: true
+}));
 
 // Routes
 server.use('/account', accountsRouter);
-server.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+server.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  swaggerOptions: {
+    url: '/swagger.json',
+  },
+  customCss: '.swagger-ui .topbar { display: none }'
+}));
+
+// Serve raw swagger spec as JSON
+server.get('/swagger.json', (_: any, res: any) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
 
 // Error handling middleware
 server.use(errorHandler);

@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import logger from '../configs/logger';
+import logger from '../config/logger';
 import {
   getAllAccounts,
   getAccountById,
@@ -14,6 +14,26 @@ import { Account, AccountWithId } from '../models/account.model';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /account:
+ *   get:
+ *     tags:
+ *       - Accounts
+ *     summary: Get all accounts
+ *     description: Retrieves a list of all bank accounts
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/AccountWithId'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 router.get('/', async (_: Request, res: Response, next: NextFunction) => {
   try {
     const accountsFullJson = await getAllAccounts();
@@ -24,6 +44,35 @@ router.get('/', async (_: Request, res: Response, next: NextFunction) => {
   }
 });
 
+/**
+ * @swagger
+ * /account/{id}:
+ *   get:
+ *     tags:
+ *       - Accounts
+ *     summary: Get account by ID
+ *     description: Retrieves a specific account by its ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Account ID
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AccountWithId'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   try {
@@ -35,6 +84,32 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+/**
+ * @swagger
+ * /account:
+ *   post:
+ *     tags:
+ *       - Accounts
+ *     summary: Create a new account
+ *     description: Creates a new bank account
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Account'
+ *     responses:
+ *       201:
+ *         description: Account created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AccountWithId'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   const account = req.body as Account;
   try {
@@ -46,6 +121,34 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+/**
+ * @swagger
+ * /account/{id}:
+ *   delete:
+ *     tags:
+ *       - Accounts
+ *     summary: Delete an account
+ *     description: Deletes a bank account by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Account ID to delete
+ *     responses:
+ *       202:
+ *         description: Account deleted successfully
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: "Account 1 has been deleted"
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   try {
@@ -57,6 +160,35 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
   }
 });
 
+/**
+ * @swagger
+ * /account:
+ *   put:
+ *     tags:
+ *       - Accounts
+ *     summary: Update an account completely
+ *     description: Performs a full update of an existing account
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AccountWithId'
+ *     responses:
+ *       200:
+ *         description: Account updated successfully
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: "Account 1 has been fully updated"
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 router.put('/', async (req: Request, res: Response, next: NextFunction) => {
   const account = req.body as AccountWithId;
   try {
@@ -68,6 +200,44 @@ router.put('/', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+/**
+ * @swagger
+ * /account/withdraw/{id}:
+ *   patch:
+ *     tags:
+ *       - Accounts
+ *     summary: Withdraw from account
+ *     description: Withdraws a specified amount from an account
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Account ID to withdraw from
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AmountRequest'
+ *     responses:
+ *       200:
+ *         description: Withdrawal successful
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: "Account 1 new balance: 9500.00"
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       422:
+ *         $ref: '#/components/responses/NotEnoughFunds'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 router.patch('/withdraw/:id', async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   const { amount } = req.body;
@@ -80,6 +250,42 @@ router.patch('/withdraw/:id', async (req: Request, res: Response, next: NextFunc
   }
 });
 
+/**
+ * @swagger
+ * /account/deposit/{id}:
+ *   patch:
+ *     tags:
+ *       - Accounts
+ *     summary: Deposit to account
+ *     description: Deposits a specified amount to an account
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Account ID to deposit to
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AmountRequest'
+ *     responses:
+ *       200:
+ *         description: Deposit successful
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: "Account 1 new balance: 11000.25"
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 router.patch('/deposit/:id', async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   const { amount } = req.body;
@@ -92,6 +298,52 @@ router.patch('/deposit/:id', async (req: Request, res: Response, next: NextFunct
   }
 });
 
+/**
+ * @swagger
+ * /account/transfer:
+ *   patch:
+ *     tags:
+ *       - Accounts
+ *     summary: Transfer between accounts
+ *     description: Transfers a specified amount from one account to another
+ *     parameters:
+ *       - in: query
+ *         name: fromAccountWithId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the account to transfer from
+ *         example: 1
+ *       - in: query
+ *         name: toAccountWithId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the account to transfer to
+ *         example: 2
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AmountRequest'
+ *     responses:
+ *       200:
+ *         description: Transfer successful
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: "Account 1 balance: 9749.25 / Account 2 balance: 5531.50"
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       422:
+ *         $ref: '#/components/responses/NotEnoughFunds'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 router.patch('/transfer', async (req: Request, res: Response, next: NextFunction) => {
   const { fromAccountWithId, toAccountWithId } = req.query;
   const { amount } = req.body;
