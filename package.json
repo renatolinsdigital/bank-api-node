@@ -10,8 +10,7 @@
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "test": "jest",
-    "prepare-env": "node -e \"if (!fs.existsSync('.env')) fs.copyFileSync('.env.example', '.env');\"",
-    "generate-swagger": "npm run build && node generate-swagger.js"
+    "prepare-env": "node -e \"if (!fs.existsSync('.env')) fs.copyFileSync('.env.example', '.env');\""
   },
   "keywords": [],
   "author": "Renato Lins",
